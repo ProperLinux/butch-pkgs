@@ -1,0 +1,12 @@
+[mirrors]
+https://git.suckless.org/sinit/snapshot/sinit-1.0.tar.gz
+
+[vars]
+filesize=3159
+sha512=8f4f3a56770f8558d053a63c260879688720a0b42dafb968d37d1fdfe1a3a1f534d8350e006b05583e94a394cdf62c8c22989f01f1e06737743362d816512aa3
+pkgver=1
+desc='suckless init'
+
+[build]
+make -j$MAKE_THREADS V=1
+make PREFIX="$butch_install_dir" install
