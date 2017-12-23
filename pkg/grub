@@ -1,0 +1,35 @@
+[deps]
+bison
+flex
+freetype
+libdevmapper
+
+[mirrors]
+http://ftp.gnu.org/gnu/grub/grub-2.02.tar.xz
+
+[vars]
+filesize=6113260
+sha512=cc6eb0a42b5c8df2f671cc128ff725afb3ff1f8832a196022e433cf0d3b75decfca2316d0aa5fabea75747d55e88f3d021dd93508563f8ca80fd7b9e7fe1f088
+desc='A Multiboot boot loader'
+
+[build]
+wget http://jaeger.morpheus.net/linux/crux/files/unifont-9.0.06.pcf.gz
+patch -i "$K"/grub2-00_header.patch util/grub.d/00_header.in
+patch -i "$K"/grub2-10_linux.patch util/grub.d/10_linux.in
+
+# fix for glibc 'gets' removal
+sed -i -e '/gets is a/d' grub-core/gnulib/stdio.in.h
+
+CFLAGS="-Wno-error $archflags $optcflags" \
+ ./configure -C --prefix="$butch_prefix" \
+ 		--sysconfdir=/etc \
+		--enable-device-mapper \
+		--disable-efiemu \
+		--disable-grub-mount
+
+make -j$MAKE_THREADS
+make DESTDIR="$butch_install_dir" install
+
+gzip -d unifont-9.0.06.pcf.gz
+install -d /usr/lib/grub/fonts
+./grub-mkfont -o /usr/lib/grub/fonts/unifont.pf2 unifont-9.0.06.pcf
