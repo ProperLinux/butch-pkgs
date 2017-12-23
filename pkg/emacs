@@ -1,0 +1,22 @@
+[mirrors]
+http://ftp.gnu.org/gnu/emacs/emacs-25.2.tar.xz
+
+[vars]
+filesize=46900336
+sha512=2485d5ccd58ecc953cbd2458bdfa45e3c9a6ddfdb1b93c72b957a0da2460d4e42092905e039e8f5bac337ea1ecb9ac404b28702a363323ee5813b30032ebf00c
+pkgver=1
+desc='the extensible, customizable, self-documenting, real-time display editor'
+
+[build]
+patch -p0 < "$K"/emacs.patch
+
+./configure -C --prefix="$butch_prefix" $xconfflags \
+  --with-x=no \
+  --without-all \
+  --without-makeinfo \
+  --with-xml2 \
+  --with-xft
+
+make -j$MAKE_THREADS
+make DESTDIR="$butch_install_dir" install
+
