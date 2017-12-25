@@ -1,0 +1,21 @@
+[mirrors]
+http://invisible-island.net/datafiles/release/dialog.tar.gz
+
+[vars]
+filesize=511503
+sha512=0355578bc64e2c75a2aae3ae83aff62eae60556a2890d50a72988efa76b82055755922bc1156a92370d773524865e76b8a0ddcde77fb6e6b5774c987fc22dee8
+tardir=dialog-1.3-20171209
+
+[deps]
+curses
+
+[build]
+[ -n "$CROSS_COMPILE" ] && xconfflags="--host=$($CC -dumpmachine|sed 's/musl/gnu/')"
+LIBS="-lcurses -lterminfo" \
+CFLAGS="-D_GNU_SOURCE $optcflags" \
+LDFLAGS="$optldflags" \
+  ./configure -C --prefix="$butch_prefix" $xconfflags \
+  --disable-unicode \
+
+make -j$MAKE_THREADS
+make DESTDIR="$butch_install_dir" install
