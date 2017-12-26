@@ -1,0 +1,35 @@
+[mirrors]
+https://dev.gentoo.org/~blueness/eudev/eudev-3.2.5.tar.gz
+
+[vars]
+filesize=1856958
+sha512=f73efde0d2dafcf79be4ebe9f6e6abb44329ea4ae45ccc4d9662c1d5ca6f4d45c27ca0b3135d7fa85f305bf7c5825dc1000079eb93fe7179c36a229fe63e372c
+
+[deps]
+kernel-headers
+libblkid
+glib
+gperf
+
+[build]
+[ -n "$CROSS_COMPILE" ] && \
+  xconfflags="--host=$($CC -dumpmachine) --with-sysroot=$butch_root_dir"
+
+CFLAGS="-D_GNU_SOURCE $optcflags" \
+LDFLAGS="$optldflags -lblkid" \
+  ./configure -C --prefix="$butch_prefix" $xconfflags \
+  --disable-manpages \
+  --disable-blkid \
+  --disable-introspection \
+
+
+make -j$MAKE_THREADS V=1
+make DESTDIR="$butch_install_dir" install
+
+dest="$butch_install_dir""$butch_prefix"
+printf "%s\n" 'KERNEL=="kvm", NAME="%k", GROUP="kvm", MODE="0660"' \
+ > "$dest"/etc/udev/rules.d/65-kvm.rules
+mkdir -p "$dest"/lib/pkgconfig
+mv "$dest"/share/pkgconfig/* "$dest"/lib/pkgconfig/
+rm -rf "$dest"/share/pkgconfig
+rm -f "$dest"/sbin/udevadm
