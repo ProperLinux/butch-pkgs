@@ -1,0 +1,15 @@
+[mirrors]
+https://roy.marples.name/downloads/openresolv/openresolv-3.9.0.tar.xz
+
+[vars]
+filesize=18844
+sha512=4498db60f0b5a762194dd3651b94cc8b01a349a8cfb891e10d040cd6b8e22fa0e9897909517831591787ad22ffad97c78d3281e32296aa1ee67de5dff9bf765e
+
+[build]
+[ -n "$CROSS_COMPILE" ] && xconfflags="--host=$($CC -dumpmachine|sed 's/musl/gnu/')"
+CFLAGS="-D_GNU_SOURCE $optcflags" \
+LDFLAGS="$optldflags" \
+  ./configure --prefix="$butch_prefix" $xconfflags \
+
+make -j$MAKE_THREADS
+make DESTDIR="$butch_install_dir" install
