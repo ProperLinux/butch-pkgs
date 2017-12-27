@@ -1,0 +1,15 @@
+[mirrors]
+https://roy.marples.name/downloads/dhcpcd/dhcpcd-6.11.5.tar.xz
+
+[vars]
+filesize=198080
+sha512=a23d5dde66567c4addbc86c8b3fbf2c5d4dba3b463659729778a310306ab0e949be8998154ef15401ac2d289bde2f090d44492bba6a1becd2f01890d4efe7051
+
+[build]
+[ -n "$CROSS_COMPILE" ] && xconfflags="--host=$($CC -dumpmachine|sed 's/musl/gnu/')"
+CFLAGS="-D_GNU_SOURCE $optcflags" \
+LDFLAGS="$optldflags" \
+  ./configure --prefix="$butch_prefix" $xconfflags
+
+make -j$MAKE_THREADS
+make DESTDIR="$butch_install_dir" install
